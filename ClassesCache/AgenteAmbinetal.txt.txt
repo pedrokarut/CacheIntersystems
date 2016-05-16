@@ -1,0 +1,16 @@
+Class User.AgenteAmbiental Extends %Persistent
+{
+
+Property codAgente As %Integer [ Required ];
+
+Index codAgenteIndex On codAgente;
+
+Property nome As %String;
+
+Property cpf As %Double;
+
+Property dataNascimento As %String;
+
+Property endereco As %String;
+
+}

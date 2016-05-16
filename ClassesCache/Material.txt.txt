@@ -1,0 +1,10 @@
+
+Property nome As %String;
+
+Property tipo As %String;
+
+Property tempoDecomposicao As %Integer;
+
+Property descricao As %String;
+
+}

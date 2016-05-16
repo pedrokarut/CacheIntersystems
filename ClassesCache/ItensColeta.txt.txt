@@ -1,0 +1,14 @@
+Class User.ItensColeta Extends %Persistent
+{
+
+Property codItem As %Integer [ Required ];
+
+Index codItemIndex On codItem;
+
+Property quantidade As %Integer;
+
+Property codMaterial As Material;
+
+Property codColeta As Coleta;
+
+}

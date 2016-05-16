@@ -1,0 +1,14 @@
+Class User.Coleta Extends %Persistent
+{
+
+Property codColeta As %Integer [ Required ];
+
+Index codColetaIndex On codColeta;
+
+Property dataColeta As %String;
+
+Property codAgente As AgenteAmbiental;
+
+Property codPonto As PontoColeta;
+
+}

@@ -1,0 +1,13 @@
+Index codPontoIndex On codPonto;
+
+Property nome As %String;
+
+Property endereco As %String;
+
+Property cidade As %String;
+
+Property estado As %String;
+
+Property dataRetirada As %String;
+
+}

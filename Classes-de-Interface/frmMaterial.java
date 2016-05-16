@@ -1,21 +1,12 @@
 package ClassesDeInterface;
-
-import ClassesJava.Material;
-import com.mongodb.Block;
-import com.mongodb.MongoClient;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import User.Material;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import org.bson.Document;
-import org.bson.types.ObjectId;
 
 
 public class frmMaterial extends javax.swing.JFrame {
 
     Material m;
-    public static ObjectId codMaterial;
 
     
     public frmMaterial() {
@@ -44,39 +35,7 @@ private void LimpaCampos()
     
     private void PreencheJTable()
     {
-        String[] cabecalhos = {"Código do Material", "Nome", "Tipo", "Descrição", "Tempo de Decomposição"};
-        final DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.setColumnIdentifiers(cabecalhos);
-        
-        //MongoDB
-         MongoClient mongoClient = new MongoClient("localhost" , 27017 );
-         final MongoDatabase db = mongoClient.getDatabase("Coleta");
-         MongoCollection<Document> coll = db.getCollection("Material");           
-         final int numDocumentos = Integer.parseInt(String.valueOf(coll.count()));
-         final Object[][] objects = new Object[numDocumentos][5];
-         FindIterable<Document> iterable = coll.find();           
-         
-         iterable.forEach(new Block<Document>() {
-    @Override
-    public void apply(final Document document) {
-        
-        for(int i=0;i<numDocumentos;i++)
-        {
-         objects[i][0] = document.getObjectId("_id");
-         objects[i][1] = document.getString("nome");
-         objects[i][2] = document.getString("tipo");
-         objects[i][3] = document.getInteger("tempoDecomposicao");
-         objects[i][4] = document.getString("descricao");
-         
-         model.addRow(new Object[]{objects[i][0], objects[i][1], objects[i][2], objects[i][3], objects[i][4]});
-
-        }
-        
-        
-    }
-});
-               
-     jTable1.setModel(model);
+       
     
   }      
 
@@ -273,42 +232,16 @@ private void LimpaCampos()
 
     private void btCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCadastrarActionPerformed
 
-        m = new Material();
-        m.setDescricao(txtDescricao.getText());
-        m.setNome(txtNome.getText());
-        m.setTempoDecomposicao(Integer.parseInt(txtTempoDecomposicao.getText()));
-        m.setTipo(txtTipo.getText());
-        m.InsertMaterial(m.getNome(), m.getTipo(), m.getTempoDecomposicao(), m.getDescricao());
-        JOptionPane.showMessageDialog(null, "Material cadastrado com sucesso!");
-        LimpaCampos();
-        LimpaJTable();
-        PreencheJTable();
+       
     }//GEN-LAST:event_btCadastrarActionPerformed
 
     private void btEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditarActionPerformed
-       m  = new Material();
-       ObjectId id = new ObjectId(txtCodMaterial.getText());
-       m.setCodMaterial(id);
-       m.setDescricao(txtDescricao.getText());
-       m.setNome(txtNome.getText());
-       m.setTempoDecomposicao(Integer.parseInt(txtTempoDecomposicao.getText()));
-       m.setTipo(txtTipo.getText());
-       m.UpdateMaterial(id, m.getNome(), m.getTipo(), m.getTempoDecomposicao(), m.getDescricao());
-       JOptionPane.showMessageDialog(null, "Material editado com sucesso!");
-       LimpaCampos();
-       LimpaJTable();
-       PreencheJTable(); 
+      
         
     }//GEN-LAST:event_btEditarActionPerformed
 
     private void btExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluirActionPerformed
-       m  = new Material();
-       ObjectId id = new ObjectId(txtCodMaterial.getText());
-       m.DeleteMaterial(id);
-       JOptionPane.showMessageDialog(null, "Material deletado com sucesso!");
-       LimpaCampos();
-       LimpaJTable();
-       PreencheJTable(); 
+      
     }//GEN-LAST:event_btExcluirActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
@@ -321,8 +254,7 @@ private void LimpaCampos()
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void btImportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btImportarActionPerformed
-        codMaterial = new ObjectId(txtCodMaterial.getText());
-        dispose();
+        
     }//GEN-LAST:event_btImportarActionPerformed
 
     private void btEditar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditar1ActionPerformed

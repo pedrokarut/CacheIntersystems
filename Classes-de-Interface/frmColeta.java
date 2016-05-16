@@ -1,15 +1,9 @@
 package ClassesDeInterface;
 
-import ClassesJava.Coleta;
-import com.mongodb.Block;
-import com.mongodb.MongoClient;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import User.Coleta;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import org.bson.Document;
-import org.bson.types.ObjectId;
+
 
 
 public class frmColeta extends javax.swing.JFrame {
@@ -17,7 +11,6 @@ public class frmColeta extends javax.swing.JFrame {
     frmAgenteAmbiental frmAge;
     frmPontoColeta frmPost;
     Coleta c;
-    public static ObjectId codColeta;
   
     public frmColeta() {
         initComponents();
@@ -45,39 +38,7 @@ public class frmColeta extends javax.swing.JFrame {
     
     private void PreencheJTable()
     {
-        String[] cabecalhos = {"Código da Coleta", "Código do Agente", "Código do Ponto", "Data da retirada"};
-        final DefaultTableModel model = (DefaultTableModel) jTableColeta.getModel();
-        model.setColumnIdentifiers(cabecalhos);
         
-        //MongoDB
-         MongoClient mongoClient = new MongoClient("localhost" , 27017 );
-         final MongoDatabase db = mongoClient.getDatabase("Coleta");
-         MongoCollection<Document> coll = db.getCollection("Coleta");           
-         final int numDocumentos = Integer.parseInt(String.valueOf(coll.count()));
-         final Object[][] objects = new Object[numDocumentos][6];
-         FindIterable<Document> iterable = coll.find();           
-         
-         iterable.forEach(new Block<Document>() {
-    @Override
-    public void apply(final Document document) {
-        
-        for(int i=0;i<numDocumentos;i++)
-        {
-         objects[i][0] = document.getObjectId("_id");
-         objects[i][1] = document.getObjectId("codAgente");
-         objects[i][2] = document.getObjectId("codPonto");
-         objects[i][3] = document.getString("dataColeta");
-         
-         
-         model.addRow(new Object[]{objects[i][0], objects[i][1], objects[i][2], objects[i][3]});
-
-        }
-        
-        
-    }
-});
-               
-     jTableColeta.setModel(model);
     
   }      
 
@@ -325,47 +286,19 @@ public class frmColeta extends javax.swing.JFrame {
     }//GEN-LAST:event_btAdiconarPontoActionPerformed
 
     private void btImportarColetaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btImportarColetaActionPerformed
-        codColeta = new ObjectId(txtCodColeta.getText());
-        dispose();
+     
     }//GEN-LAST:event_btImportarColetaActionPerformed
 
     private void btCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCadastrarActionPerformed
-        c  = new Coleta();
-        ObjectId codAgente = new ObjectId(txtCodAgente.getText());
-        ObjectId codPonto = new ObjectId(txtCodPosto.getText());
-        c.setCodAgente(codAgente);
-        c.setCodPonto(codPonto);
-        c.setDataColeta(txtData.getText());
-        c.InsertColeta(codAgente, codPonto, c.getDataColeta());
-        JOptionPane.showMessageDialog(null, "Coleta realizada com sucesso!");
-        LimpaCampos();
-        LimpaJTable();
-        PreencheJTable();
+     
     }//GEN-LAST:event_btCadastrarActionPerformed
 
     private void btEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditarActionPerformed
-       c = new Coleta();
-       ObjectId id = new ObjectId(txtCodColeta.getText());
-       ObjectId codAgente = new ObjectId(txtCodAgente.getText());
-       ObjectId codPonto = new ObjectId(txtCodPosto.getText());
-       c.setCodAgente(codAgente);
-       c.setCodPonto(codPonto);
-       c.setDataColeta(txtData.getText());
-       c.UpdateColeta(id, codAgente, codPonto, c.getDataColeta());
-       JOptionPane.showMessageDialog(null, "Coleta editada com sucesso!");
-       LimpaCampos();
-       LimpaJTable();
-       PreencheJTable();
+      
     }//GEN-LAST:event_btEditarActionPerformed
 
     private void btExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluirActionPerformed
-       c = new Coleta();
-       ObjectId id = new ObjectId(txtCodColeta.getText());
-       c.DeleteColeta(id);
-       JOptionPane.showMessageDialog(null, "Coleta deletada com sucesso!");
-       LimpaCampos();
-       LimpaJTable();
-       PreencheJTable();
+       
     }//GEN-LAST:event_btExcluirActionPerformed
        
     private void btEditar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditar1ActionPerformed
@@ -373,14 +306,7 @@ public class frmColeta extends javax.swing.JFrame {
     }//GEN-LAST:event_btEditar1ActionPerformed
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
-        if(frmAgenteAmbiental.codAgente != null)
-        {
-            txtCodAgente.setText(String.valueOf(frmAgenteAmbiental.codAgente));
-        }
-        if(frmPontoColeta.codPonto != null)
-        {
-            txtCodPosto.setText(String.valueOf(frmPontoColeta.codPonto));
-        }
+        
     }//GEN-LAST:event_formWindowGainedFocus
 
     private void jTableColetaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableColetaMouseClicked

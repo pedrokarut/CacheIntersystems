@@ -1,20 +1,13 @@
 package ClassesDeInterface;
-import ClassesJava.PontoColeta;
-import com.mongodb.Block;
-import com.mongodb.MongoClient;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import User.PontoColeta;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import org.bson.Document;
-import org.bson.types.ObjectId;
+
 
 
 public class frmPontoColeta extends javax.swing.JFrame {
 
     PontoColeta p;
-    public static ObjectId codPonto;
     
     public frmPontoColeta() {
         initComponents();
@@ -45,41 +38,7 @@ public class frmPontoColeta extends javax.swing.JFrame {
     
     private void PreencheJTable()
     {
-        String[] cabecalhos = {"Código do Ponto", "Nome", "Endereço", "Cidade", "Estado", "Data de Retirada"};
-        final DefaultTableModel model = (DefaultTableModel) jTablePonto.getModel();
-        model.setColumnIdentifiers(cabecalhos);
-        
-        //MongoDB
-         MongoClient mongoClient = new MongoClient("localhost" , 27017 );
-         final MongoDatabase db = mongoClient.getDatabase("Coleta");
-         MongoCollection<Document> coll = db.getCollection("PontoColeta");           
-         final int numDocumentos = Integer.parseInt(String.valueOf(coll.count()));
-         final Object[][] objects = new Object[numDocumentos][6];
-         FindIterable<Document> iterable = coll.find();           
-         
-         iterable.forEach(new Block<Document>() {
-    @Override
-    public void apply(final Document document) {
-        
-        for(int i=0;i<numDocumentos;i++)
-        {
-         
-         objects[i][0] = document.getObjectId("_id");
-         objects[i][1] = document.getString("nome");
-         objects[i][2] = document.getString("endereco");
-         objects[i][3] = document.getString("cidade");
-         objects[i][4] = document.getString("estado");
-         objects[i][5] = document.getString("dataRetirada");
-         
-         model.addRow(new Object[]{objects[i][0], objects[i][1], objects[i][2], objects[i][3], objects[i][4], objects[i][5]});
-
-        }
-        
-        
-    }
-});
-               
-     jTablePonto.setModel(model);
+       
     
   }      
 
@@ -302,17 +261,7 @@ public class frmPontoColeta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCadastrarActionPerformed
-        p = new PontoColeta();
-        p.setCidade(txtCidade.getText());
-        p.setDataRetirada(txtData.getText());
-        p.setEndereco(txtEndereco.getText());
-        p.setEstado(txtEstado.getText());
-        p.setNome(txtNome.getText());
-        p.InsertPonto(p.getNome(), p.getEndereco(), p.getCidade(), p.getEstado(), p.getDataRetirada());
-        JOptionPane.showMessageDialog(null, "Ponto de Coleta cadastrado com sucesso!");
-        LimpaCampos();
-        LimpaJTable();
-        PreencheJTable();
+       
     }//GEN-LAST:event_btCadastrarActionPerformed
 
     private void jTablePontoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePontoMouseClicked
@@ -326,35 +275,15 @@ public class frmPontoColeta extends javax.swing.JFrame {
     }//GEN-LAST:event_jTablePontoMouseClicked
 
     private void btEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditarActionPerformed
-        p = new PontoColeta();
-        ObjectId id = new ObjectId(txtCodPosto.getText());
-        p.setCodPonto(id);
-        p.setCidade(txtCidade.getText());
-        p.setDataRetirada(txtData.getText());
-        p.setEndereco(txtEndereco.getText());
-        p.setEstado(txtEstado.getText());
-        p.setNome(txtNome.getText());
-        p.UpdatePonto(id, p.getNome(), p.getEndereco(), p.getCidade(),p.getEstado(), p.getDataRetirada());
-        JOptionPane.showMessageDialog(null, "Ponto de Coleta editada com sucesso!");
-        LimpaCampos();
-        LimpaJTable();
-        PreencheJTable();
+        
     }//GEN-LAST:event_btEditarActionPerformed
 
     private void btExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluirActionPerformed
-           p = new PontoColeta();
-           ObjectId id =  new ObjectId(txtCodPosto.getText());
-           p.DeletePonto(id);
-           JOptionPane.showMessageDialog(null, "Ponto de Coleta deletado com sucesso!");
-           LimpaCampos();
-           LimpaJTable();
-           PreencheJTable();
+          
     }//GEN-LAST:event_btExcluirActionPerformed
 
     private void btImportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btImportarActionPerformed
-        codPonto = new ObjectId(txtCodPosto.getText());
-        dispose();
-        
+              
     }//GEN-LAST:event_btImportarActionPerformed
 
     private void btEditar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditar1ActionPerformed

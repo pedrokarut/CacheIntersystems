@@ -1,15 +1,8 @@
 package ClassesDeInterface;
-
-import ClassesJava.ItensColeta;
-import com.mongodb.Block;
-import com.mongodb.MongoClient;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import User.ItensColeta;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import org.bson.Document;
-import org.bson.types.ObjectId;
+
 
 
 public class frmItens extends javax.swing.JFrame {
@@ -46,38 +39,7 @@ public class frmItens extends javax.swing.JFrame {
     
     private void PreencheJTable()
     {
-        String[] cabecalhos = {"Código do Item", "Código do Material", "Código da Coleta", "Quantidade"};
-        final DefaultTableModel model = (DefaultTableModel) jTableItens.getModel();
-        model.setColumnIdentifiers(cabecalhos);
-        
-        //MongoDB
-         MongoClient mongoClient = new MongoClient("localhost" , 27017 );
-         final MongoDatabase db = mongoClient.getDatabase("Coleta");
-         MongoCollection<Document> coll = db.getCollection("ItensColeta");           
-         final int numDocumentos = Integer.parseInt(String.valueOf(coll.count()));
-         final Object[][] objects = new Object[numDocumentos][5];
-         FindIterable<Document> iterable = coll.find();           
-         
-         iterable.forEach(new Block<Document>() {
-    @Override
-    public void apply(final Document document) {
-        
-        for(int i=0;i<numDocumentos;i++)
-        {
-         objects[i][0] = document.getObjectId("_id");
-         objects[i][1] = document.getObjectId("codMaterial");
-         objects[i][2] = document.getObjectId("codColeta");
-         objects[i][3] = document.getInteger("quantidade");
-         
-         model.addRow(new Object[]{objects[i][0], objects[i][1], objects[i][2], objects[i][3]});
-
-        }
-        
-        
-    }
-});
-               
-    jTableItens.setModel(model);
+       
     
   }      
 
@@ -284,42 +246,15 @@ public class frmItens extends javax.swing.JFrame {
     }//GEN-LAST:event_btImportarColetaActionPerformed
 
     private void btCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCadastrarActionPerformed
-        i =  new ItensColeta();
-        ObjectId codMat = new ObjectId(txtCodMaterial.getText());
-        ObjectId codCol = new ObjectId(txtCodColeta.getText());
-        i.setCodColeta(codCol);
-        i.setCodMaterial(codMat);
-        i.setQuantidade(Integer.parseInt(txtQuantidade.getText()));
-        i.InsertItem(codMat, codCol, i.getQuantidade());
-        JOptionPane.showMessageDialog(null, "Item cadastrado com sucesso!");
-        LimpaCampos();
-        LimpaJTable();
-        PreencheJTable();
+       
     }//GEN-LAST:event_btCadastrarActionPerformed
 
     private void btEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditarActionPerformed
-        i =  new ItensColeta();
-        ObjectId id = new ObjectId(txtCodItem.getText());
-        ObjectId codMat = new ObjectId(txtCodMaterial.getText());
-        ObjectId codCol = new ObjectId(txtCodColeta.getText());
-        i.setCodColeta(codCol);
-        i.setCodMaterial(codMat);
-        i.setQuantidade(Integer.parseInt(txtQuantidade.getText()));
-        i.UpdateItem(id, codMat, codCol, i.getQuantidade());
-        JOptionPane.showMessageDialog(null, "Item editado com sucesso!");
-        LimpaCampos();
-        LimpaJTable();
-        PreencheJTable();
+       
     }//GEN-LAST:event_btEditarActionPerformed
 
     private void btExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluirActionPerformed
-        i  = new ItensColeta();
-        ObjectId id = new ObjectId(txtCodItem.getText());
-        i.DeleteItem(id);
-        JOptionPane.showMessageDialog(null, "Item deletado com sucesso!");
-        LimpaCampos();
-        LimpaJTable();
-        PreencheJTable();
+        
     }//GEN-LAST:event_btExcluirActionPerformed
 
     private void jTableItensMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableItensMouseClicked
@@ -331,14 +266,7 @@ public class frmItens extends javax.swing.JFrame {
     }//GEN-LAST:event_jTableItensMouseClicked
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
-        if(frmColeta.codColeta != null)
-        {
-            txtCodColeta.setText(String.valueOf(frmColeta.codColeta));
-        }
-        if(frmMaterial.codMaterial != null)
-        {
-            txtCodMaterial.setText(String.valueOf(frmMaterial.codMaterial));
-        }
+        
     }//GEN-LAST:event_formWindowGainedFocus
 
     

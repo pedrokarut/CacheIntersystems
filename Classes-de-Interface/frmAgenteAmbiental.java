@@ -1,26 +1,15 @@
 package ClassesDeInterface;
-import ClassesJava.AgenteAmbiental;
-import com.mongodb.BasicDBObject;
-import com.mongodb.Block;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.MongoClient;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
+import User.AgenteAmbiental;
 import java.awt.List;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import org.bson.Document;
-import org.bson.types.ObjectId;
+
 
 
 public class frmAgenteAmbiental extends javax.swing.JFrame {
 
     AgenteAmbiental a;
-    public static ObjectId codAgente;
 
     
     public frmAgenteAmbiental() {
@@ -50,40 +39,7 @@ public class frmAgenteAmbiental extends javax.swing.JFrame {
     
     private void PreencheJTable()
     {
-        String[] cabecalhos = {"Código do Agente", "Nome", "CPF", "Data de Nascimento", "Endereço"};
-        final DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.setColumnIdentifiers(cabecalhos);
         
-        //MongoDB
-         MongoClient mongoClient = new MongoClient("localhost" , 27017 );
-         final MongoDatabase db = mongoClient.getDatabase("Coleta");
-         MongoCollection<Document> coll = db.getCollection("AgenteAmbiental");           
-         final int numDocumentos = Integer.parseInt(String.valueOf(coll.count()));
-         final Object[][] objects = new Object[numDocumentos][5];
-         FindIterable<Document> iterable = coll.find();           
-         
-         iterable.forEach(new Block<Document>() {
-    @Override
-    public void apply(final Document document) {
-        
-        for(int i=0;i<numDocumentos;i++)
-        {
-         objects[i][0] = document.getObjectId("_id");
-         objects[i][1] = document.getString("nome");
-         objects[i][2] = document.getLong("cpf");
-         objects[i][3] = document.getString("dataNascimento");
-         objects[i][4] = document.getString("endereco");
-         
-         model.addRow(new Object[]{objects[i][0], objects[i][1], objects[i][2], objects[i][3], objects[i][4]});
-
-        }
-        
-        
-    }
-});
-               
-    jTable1.setModel(model);
-    
   }      
 
       
@@ -284,46 +240,19 @@ public class frmAgenteAmbiental extends javax.swing.JFrame {
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void btCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCadastrarActionPerformed
-        a = new AgenteAmbiental();
-        a.setCpf(Long.parseLong(txtCPF.getText()));
-        a.setDataNascimento(txtDataNascimento.getText());
-        a.setEndereco(txtEndereco.getText());
-        a.setNome(txtNome.getText());
-        a.InsertAgente(a.getNome(), a.getCpf(), a.getDataNascimento(), a.getEndereco());
-        JOptionPane.showMessageDialog(null, "Agente Ambiental Cadastrado com sucesso!");
-        LimpaCampos();
-        LimpaJTable();
-        PreencheJTable();
+       
     }//GEN-LAST:event_btCadastrarActionPerformed
 
     private void btEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditarActionPerformed
-            a = new AgenteAmbiental();
-            ObjectId id = new ObjectId(txtCodColetador.getText());
-            a.setCodAgente(id);
-            a.setCpf(Long.parseLong(txtCPF.getText()));
-            a.setDataNascimento(txtDataNascimento.getText());
-            a.setEndereco(txtEndereco.getText());
-            a.setNome(txtNome.getText());
-            a.UpdateAgente(a.getCodAgente(), a.getNome(), a.getCpf(), a.getDataNascimento(), a.getEndereco());
-            JOptionPane.showMessageDialog(null, "Agente Ambiental editado com sucesso!");
-            LimpaCampos();
-            LimpaJTable();
-            PreencheJTable();
+           
     }//GEN-LAST:event_btEditarActionPerformed
 
     private void btExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluirActionPerformed
-        a = new AgenteAmbiental();
-        ObjectId id = new ObjectId(txtCodColetador.getText());
-        a.DeleteAgente(id);
-        JOptionPane.showMessageDialog(null, "Agente Ambiental deletado com sucesso!");
-        LimpaCampos();
-        LimpaJTable();
-        PreencheJTable();
+        
     }//GEN-LAST:event_btExcluirActionPerformed
 
     private void btImportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btImportarActionPerformed
-        codAgente = new ObjectId(txtCodColetador.getText());
-        dispose();
+        
     }//GEN-LAST:event_btImportarActionPerformed
 
     private void btEditar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditar1ActionPerformed

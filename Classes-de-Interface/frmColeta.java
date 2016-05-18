@@ -144,9 +144,6 @@ public class frmColeta extends javax.swing.JFrame {
 
         jLabel6.setText("Código Coleta:");
 
-        txtCodColeta.setEditable(false);
-        txtCodColeta.setEnabled(false);
-
         btCadastrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/circle.png"))); // NOI18N
         btCadastrar.setText("Cadastrar");
         btCadastrar.addActionListener(new java.awt.event.ActionListener() {
@@ -163,7 +160,6 @@ public class frmColeta extends javax.swing.JFrame {
             }
         });
 
-        btExcluir.setIcon(new javax.swing.ImageIcon("/home/peter/Pictures/Coletas icons/CRUD16/png/close.png")); // NOI18N
         btExcluir.setText("Excluir");
         btExcluir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -345,6 +341,7 @@ public class frmColeta extends javax.swing.JFrame {
             c = new Coleta(con.getDbconnection());
             p = (PontoColeta) PontoColeta._open(con.getDbconnection(), new Id(txtCodPosto.getText()));
             a = (AgenteAmbiental) AgenteAmbiental._open(con.getDbconnection(), new Id(txtCodAgente.getText()));
+            c.setcodColeta(Integer.parseInt(txtCodColeta.getText()));
             c.setcodAgente(a);
             c.setcodPonto(p);
             c.setdataColeta(txtData.getText());

@@ -1,7 +1,12 @@
 package ClassesDeInterface;
 import User.AgenteAmbiental;
+import com.intersys.objects.CacheException;
+import com.intersys.objects.Id;
 import java.awt.List;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -10,9 +15,11 @@ import javax.swing.table.DefaultTableModel;
 public class frmAgenteAmbiental extends javax.swing.JFrame {
 
     AgenteAmbiental a;
+    Conexao con;
+    public static int codAgente;
 
     
-    public frmAgenteAmbiental() {
+    public frmAgenteAmbiental() throws CacheException {
         initComponents();
         LimpaCampos();
         LimpaJTable();
@@ -32,15 +39,45 @@ public class frmAgenteAmbiental extends javax.swing.JFrame {
     {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
-        model.setColumnCount(0);
-     
+        model.setColumnCount(0);     
         jTable1.setModel(model);
     }
     
-    private void PreencheJTable()
+    private void PreencheJTable() throws CacheException
     {
+        String[] cabecalhos = {"Código do Agente", "Nome do Agente", "CPF", "Data de Nascimento", "Endereço"};
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setColumnIdentifiers(cabecalhos);
         
-  }      
+        try
+        {
+            con = new Conexao();
+            a =  new AgenteAmbiental(con.getDbconnection());
+            Iterator iter =  a.openByQuery(con.getDbconnection(), null, null);
+            
+            Object[][] objects = new Object[500][5];
+            int i = 0;         
+            
+            while(iter.hasNext())
+            {
+                    a = new AgenteAmbiental(con.getDbconnection());
+                    a = (AgenteAmbiental) iter.next();
+                
+                    objects[i][0]= a.getcodAgente();
+                    objects[i][1]= a.getnome();
+                    objects[i][2]= a.getcpf();
+                    objects[i][3]= a.getdataNascimento();
+                    objects[i][4]= a.getendereco();
+                    
+                    model.addRow(new Object[]{objects[i][0], objects[i][1], objects[i][2], objects[i][3], objects[i][4]});
+            }
+        }
+        catch(CacheException ex)
+        {
+            Logger.getLogger(frmAgenteAmbiental.class.getName()).log(Level.SEVERE, null, ex);
+        }       
+                jTable1.setModel(model);           
+    }      
 
       
     
@@ -84,9 +121,6 @@ public class frmAgenteAmbiental extends javax.swing.JFrame {
 
         jLabel6.setText("Código Coletador:");
 
-        txtCodColetador.setEditable(false);
-        txtCodColetador.setEnabled(false);
-
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -118,7 +152,6 @@ public class frmAgenteAmbiental extends javax.swing.JFrame {
             }
         });
 
-        btExcluir.setIcon(new javax.swing.ImageIcon("/home/peter/Pictures/Coletas icons/CRUD16/png/close.png")); // NOI18N
         btExcluir.setText("Excluir");
         btExcluir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -177,7 +210,7 @@ public class frmAgenteAmbiental extends javax.swing.JFrame {
                             .addComponent(btEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(18, 18, 18)
                             .addComponent(btExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(0, 8, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -240,25 +273,81 @@ public class frmAgenteAmbiental extends javax.swing.JFrame {
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void btCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCadastrarActionPerformed
-       
+        con = new Conexao();
+        try
+        {
+            a = new AgenteAmbiental(con.getDbconnection());
+            a.setcodAgente(Integer.parseInt(txtCodColetador.getText()));
+            a.setcpf(Double.parseDouble(txtCPF.getText()));
+            a.setdataNascimento(txtDataNascimento.getText());
+            a.setendereco(txtEndereco.getText());
+            a.setnome(txtNome.getText());
+            a.save();
+            JOptionPane.showMessageDialog(null, "Agente ambiental cadastrado com sucesso!");
+            LimpaCampos();
+            LimpaJTable();
+            
+        } 
+        catch (CacheException ex) 
+        {
+            Logger.getLogger(frmAgenteAmbiental.class.getName()).log(Level.SEVERE, null, ex);
+        }       
     }//GEN-LAST:event_btCadastrarActionPerformed
 
     private void btEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditarActionPerformed
-           
+        con = new Conexao();
+        try
+        {
+            a = null;
+            a = (AgenteAmbiental) AgenteAmbiental._open(con.getDbconnection(), new Id(txtCodColetador.getText()));
+            a.setcpf(Double.parseDouble(txtCPF.getText()));
+            a.setdataNascimento(txtDataNascimento.getText());
+            a.setendereco(txtEndereco.getText());
+            a.setnome(txtNome.getText());
+            a.save();
+            JOptionPane.showMessageDialog(null, "Agente ambiental editado com sucesso!");
+            LimpaCampos();
+            LimpaJTable();
+            PreencheJTable();
+        } 
+        catch (CacheException ex) 
+        {
+            Logger.getLogger(frmAgenteAmbiental.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btEditarActionPerformed
 
     private void btExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluirActionPerformed
-        
+        try 
+        {
+            a = (AgenteAmbiental) AgenteAmbiental._open(con.getDbconnection(), new Id(txtCodColetador.getText()));
+            a.delete();
+            JOptionPane.showMessageDialog(null, "Agente ambiental deletado com sucesso!");
+            LimpaCampos();
+            LimpaJTable();
+            PreencheJTable();
+        } 
+        catch (CacheException ex) 
+        {
+            Logger.getLogger(frmAgenteAmbiental.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btExcluirActionPerformed
 
     private void btImportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btImportarActionPerformed
-        
+        codAgente = Integer.parseInt(txtCodColetador.getText());
+        dispose();
     }//GEN-LAST:event_btImportarActionPerformed
 
     private void btEditar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditar1ActionPerformed
         LimpaCampos();
         LimpaJTable();
-        PreencheJTable();
+        try 
+        {
+            PreencheJTable();
+        } 
+        catch (CacheException ex) 
+        {
+            Logger.getLogger(frmAgenteAmbiental.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btEditar1ActionPerformed
 
    
@@ -266,7 +355,11 @@ public class frmAgenteAmbiental extends javax.swing.JFrame {
         
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new frmAgenteAmbiental().setVisible(true);
+                try {
+                    new frmAgenteAmbiental().setVisible(true);
+                } catch (CacheException ex) {
+                    Logger.getLogger(frmAgenteAmbiental.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

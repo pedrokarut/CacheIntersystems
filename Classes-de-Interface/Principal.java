@@ -1,5 +1,9 @@
 package ClassesDeInterface;
 
+import com.intersys.objects.CacheException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Principal extends javax.swing.JFrame {
     
     frmColeta frmCol;
@@ -116,7 +120,11 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btColetaActionPerformed
 
     private void btAgenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAgenteActionPerformed
-        frmAg = new frmAgenteAmbiental();
+        try {
+            frmAg = new frmAgenteAmbiental();
+        } catch (CacheException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
         frmAg.setLocationRelativeTo(null);
         frmAg.setVisible(true);
     }//GEN-LAST:event_btAgenteActionPerformed

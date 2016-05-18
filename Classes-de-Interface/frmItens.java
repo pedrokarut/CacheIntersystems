@@ -1,5 +1,12 @@
 package ClassesDeInterface;
+import User.Coleta;
 import User.ItensColeta;
+import User.Material;
+import com.intersys.objects.CacheException;
+import com.intersys.objects.Id;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -11,6 +18,9 @@ public class frmItens extends javax.swing.JFrame {
     frmMaterial frmMat;
     frmColeta frmCol;
     ItensColeta i;
+    Coleta c;
+    Material m;
+    Conexao con;
    
     public frmItens() {
         initComponents();
@@ -39,9 +49,39 @@ public class frmItens extends javax.swing.JFrame {
     
     private void PreencheJTable()
     {
-       
+       String[] cabecalhos = {"Código da Coleta", "Código do Agente", "Código do Ponto", "Data da Coleta"};
+        DefaultTableModel model = (DefaultTableModel) jTableItens.getModel();
+        model.setColumnIdentifiers(cabecalhos);
+        
+        try
+        {
+            con = new Conexao();
+            i =  new ItensColeta(con.getDbconnection());
+            Iterator iter =  i.openByQuery(con.getDbconnection(), null, null);
+                       
+            Object[][] objects = new Object[500][4];
+            int j = 0;         
+            
+            while(iter.hasNext())
+            {
+                    i = new ItensColeta(con.getDbconnection());
+                    i = (ItensColeta) iter.next();
+                
+                    objects[j][0]= i.getcodItem();
+                    objects[j][1]= i.getcodMaterial().getcodMaterial();
+                    objects[j][2]= i.getcodColeta().getcodColeta();
+                    objects[j][3]= i.getquantidade();
+                    
+                    model.addRow(new Object[]{objects[j][0], objects[j][1], objects[j][2], objects[j][3]});
+            }
+        }
+        catch(CacheException ex)
+        {
+            Logger.getLogger(frmAgenteAmbiental.class.getName()).log(Level.SEVERE, null, ex);
+        }       
+                jTableItens.setModel(model);
     
-  }      
+    }      
 
     
     @SuppressWarnings("unchecked")
@@ -86,9 +126,6 @@ public class frmItens extends javax.swing.JFrame {
 
         jLabel5.setText("Quantidade:");
 
-        txtCodItem.setEditable(false);
-        txtCodItem.setEnabled(false);
-
         btCadastrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/circle.png"))); // NOI18N
         btCadastrar.setText("Cadastrar");
         btCadastrar.addActionListener(new java.awt.event.ActionListener() {
@@ -105,7 +142,6 @@ public class frmItens extends javax.swing.JFrame {
             }
         });
 
-        btExcluir.setIcon(new javax.swing.ImageIcon("/home/peter/Pictures/Coletas icons/CRUD16/png/close.png")); // NOI18N
         btExcluir.setText("Excluir");
         btExcluir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -122,6 +158,11 @@ public class frmItens extends javax.swing.JFrame {
 
         btEditar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/broom.png"))); // NOI18N
         btEditar1.setText("Limpar");
+        btEditar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btEditar1ActionPerformed(evt);
+            }
+        });
 
         jTableItens.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -157,24 +198,11 @@ public class frmItens extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtCodMaterial, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(txtCodItem, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(btAdicionarMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(btEditar1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(txtCodMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(266, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel6)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(txtCodColeta, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btImportarColeta, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                                 .addGroup(layout.createSequentialGroup()
@@ -187,8 +215,26 @@ public class frmItens extends javax.swing.JFrame {
                                     .addComponent(btEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(btExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 18, Short.MAX_VALUE))))
+                            .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(btAdicionarMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(txtCodColeta, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(btImportarColeta, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 18, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtCodItem)
+                                .addGap(82, 82, 82)))
+                        .addComponent(btEditar1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(59, 59, 59))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -246,15 +292,65 @@ public class frmItens extends javax.swing.JFrame {
     }//GEN-LAST:event_btImportarColetaActionPerformed
 
     private void btCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCadastrarActionPerformed
-       
+        con = new Conexao();
+        try 
+        {
+            i = new ItensColeta(con.getDbconnection());
+            i.setcodItem(Integer.parseInt(txtCodItem.getText()));
+            m = (Material) Material._open(con.getDbconnection(), new Id(txtCodMaterial.getText()));
+            i.setcodMaterial(m);
+            c = (Coleta) Coleta._open(con.getDbconnection(), new Id(txtCodColeta.getText()));
+            i.setcodColeta(c);
+            i.setquantidade(Integer.parseInt(txtQuantidade.getText()));
+            i.save();
+            JOptionPane.showMessageDialog(null, "Item de Coleta cadastrado com sucesso!");
+            LimpaCampos();
+            LimpaJTable();
+            PreencheJTable();
+        } 
+        catch (CacheException ex)
+        {
+            Logger.getLogger(frmItens.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btCadastrarActionPerformed
 
     private void btEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditarActionPerformed
-       
+        con = new Conexao();
+        try 
+        {
+            i = (ItensColeta) ItensColeta._open(con.getDbconnection(), new Id(txtCodItem.getText()));
+            m = (Material) Material._open(con.getDbconnection(), new Id(txtCodMaterial.getText()));
+            i.setcodMaterial(m);
+            c = (Coleta) Coleta._open(con.getDbconnection(), new Id(txtCodColeta.getText()));
+            i.setcodColeta(c);
+            i.setquantidade(Integer.parseInt(txtQuantidade.getText()));
+            i.save();
+            JOptionPane.showMessageDialog(null, "Item de Coleta editado com sucesso!");
+            LimpaCampos();
+            LimpaJTable();
+            PreencheJTable();
+        } 
+        catch (CacheException ex)
+        {
+            Logger.getLogger(frmItens.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btEditarActionPerformed
 
     private void btExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluirActionPerformed
-        
+        con = new Conexao();
+        try 
+        {
+            i = (ItensColeta) ItensColeta._open(con.getDbconnection(), new Id(txtCodItem.getText()));
+            i.delete();
+            JOptionPane.showMessageDialog(null, "Item de Coleta editado com sucesso!");
+            LimpaCampos();
+            LimpaJTable();
+            PreencheJTable();
+        } 
+        catch (CacheException ex)
+        {
+            Logger.getLogger(frmItens.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btExcluirActionPerformed
 
     private void jTableItensMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableItensMouseClicked
@@ -266,8 +362,21 @@ public class frmItens extends javax.swing.JFrame {
     }//GEN-LAST:event_jTableItensMouseClicked
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
-        
+        if(frmMaterial.codMat != 0)
+        {
+            txtCodMaterial.setText(String.valueOf(frmMaterial.codMat));
+        }
+        if(frmColeta.codColeta != 0)
+        {
+            txtCodColeta.setText(String.valueOf(frmColeta.codColeta));
+        }
     }//GEN-LAST:event_formWindowGainedFocus
+
+    private void btEditar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditar1ActionPerformed
+        LimpaCampos();
+        LimpaJTable();
+        PreencheJTable();
+    }//GEN-LAST:event_btEditar1ActionPerformed
 
     
     public static void main(String args[]) {

@@ -1,5 +1,11 @@
 package ClassesDeInterface;
+import User.AgenteAmbiental;
 import User.Material;
+import com.intersys.objects.CacheException;
+import com.intersys.objects.Id;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -7,22 +13,26 @@ import javax.swing.table.DefaultTableModel;
 public class frmMaterial extends javax.swing.JFrame {
 
     Material m;
+    Conexao con;
+    public static int codMat;
 
     
-    public frmMaterial() {
+    public frmMaterial() 
+    {
         initComponents();
         LimpaCampos();
         LimpaJTable();
         PreencheJTable();
     }
-private void LimpaCampos()
-{
-    txtCodMaterial.setText(null);
-    txtDescricao.setText(null);
-    txtNome.setText(null);
-    txtTempoDecomposicao.setText(null);
-    txtTipo.setText(null);
-}
+    
+    private void LimpaCampos()
+    {
+        txtCodMaterial.setText(null);
+        txtDescricao.setText(null);
+        txtNome.setText(null);
+        txtTempoDecomposicao.setText(null);
+        txtTipo.setText(null);
+    }
 
      private void LimpaJTable()
     {
@@ -35,9 +45,40 @@ private void LimpaCampos()
     
     private void PreencheJTable()
     {
-       
+        String[] cabecalhos = {"Código do Material", "Nome", "Tipo", "Tempo de decomposição", "descrição"};
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setColumnIdentifiers(cabecalhos);
+        
+        try
+        {
+            con = new Conexao();
+            m =  new Material(con.getDbconnection());
+            Iterator iter =  m.openByQuery(con.getDbconnection(), null, null);
+            
+            Object[][] objects = new Object[500][5];
+            int i = 0;         
+            
+            while(iter.hasNext())
+            {
+                    m = new Material(con.getDbconnection());
+                    m = (Material) iter.next();
+                
+                    objects[i][0]= m.getcodMaterial();
+                    objects[i][1]= m.getnome();
+                    objects[i][2]= m.gettipo();
+                    objects[i][3]= m.gettempoDecomposicao();
+                    objects[i][4]= m.getdescricao();
+                    
+                    model.addRow(new Object[]{objects[i][0], objects[i][1], objects[i][2], objects[i][3], objects[i][4]});
+            }
+        }
+        catch(CacheException ex)
+        {
+            Logger.getLogger(frmAgenteAmbiental.class.getName()).log(Level.SEVERE, null, ex);
+        }       
+                jTable1.setModel(model);       
     
-  }      
+    }      
 
     
     @SuppressWarnings("unchecked")
@@ -79,10 +120,6 @@ private void LimpaCampos()
         jLabel7.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         jLabel7.setText("Material");
 
-        txtCodMaterial.setEditable(false);
-        txtCodMaterial.setEnabled(false);
-
-        btExcluir.setIcon(new javax.swing.ImageIcon("/home/peter/Pictures/Coletas icons/CRUD16/png/close.png")); // NOI18N
         btExcluir.setText("Excluir");
         btExcluir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -231,17 +268,65 @@ private void LimpaCampos()
     }// </editor-fold>//GEN-END:initComponents
 
     private void btCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCadastrarActionPerformed
-
+        con = new Conexao();
+        try 
+        {
+            m = new Material(con.getDbconnection());
+            m.setcodMaterial(Integer.parseInt(txtCodMaterial.getText()));
+            m.setdescricao(txtDescricao.getText());
+            m.setnome(txtNome.getText());
+            m.settempoDecomposicao(Integer.parseInt(txtTempoDecomposicao.getText()));
+            m.settipo(txtTipo.getText());
+            m.save();
+            JOptionPane.showMessageDialog(null, "Material cadastrado com sucesso!");
+            LimpaCampos();
+            LimpaJTable();
+            PreencheJTable();
+        } 
+        catch (CacheException ex) 
+        {
+            Logger.getLogger(frmMaterial.class.getName()).log(Level.SEVERE, null, ex);
+        }
        
     }//GEN-LAST:event_btCadastrarActionPerformed
 
     private void btEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditarActionPerformed
-      
+        con = new Conexao();
+        try 
+        {
+            m = (Material) Material._open(con.getDbconnection(), new Id(txtCodMaterial.getText()));
+            m.setdescricao(txtDescricao.getText());
+            m.setnome(txtNome.getText());
+            m.settempoDecomposicao(Integer.parseInt(txtTempoDecomposicao.getText()));
+            m.settipo(txtTipo.getText());
+            m.save();
+            JOptionPane.showMessageDialog(null, "Material editado com sucesso!");
+            LimpaCampos();
+            LimpaJTable();
+            PreencheJTable();
+        } 
+        catch (CacheException ex) 
+        {
+            Logger.getLogger(frmMaterial.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }//GEN-LAST:event_btEditarActionPerformed
 
     private void btExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluirActionPerformed
-      
+       con = new Conexao();
+        try 
+        {
+            m = (Material) Material._open(con.getDbconnection(), new Id(txtCodMaterial.getText()));
+            m.delete();
+            JOptionPane.showMessageDialog(null, "Material deletado com sucesso!");
+            LimpaCampos();
+            LimpaJTable();
+            PreencheJTable();
+        } 
+        catch (CacheException ex) 
+        {
+            Logger.getLogger(frmMaterial.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btExcluirActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
@@ -254,7 +339,8 @@ private void LimpaCampos()
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void btImportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btImportarActionPerformed
-        
+        codMat = Integer.parseInt(txtCodMaterial.getText());
+        dispose();;
     }//GEN-LAST:event_btImportarActionPerformed
 
     private void btEditar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditar1ActionPerformed

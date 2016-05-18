@@ -1,6 +1,13 @@
 package ClassesDeInterface;
 
+import User.AgenteAmbiental;
 import User.Coleta;
+import User.PontoColeta;
+import com.intersys.objects.CacheException;
+import com.intersys.objects.Id;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -11,6 +18,10 @@ public class frmColeta extends javax.swing.JFrame {
     frmAgenteAmbiental frmAge;
     frmPontoColeta frmPost;
     Coleta c;
+    AgenteAmbiental a;
+    Conexao con;
+    PontoColeta p;
+    public static int codColeta;
   
     public frmColeta() {
         initComponents();
@@ -38,9 +49,39 @@ public class frmColeta extends javax.swing.JFrame {
     
     private void PreencheJTable()
     {
+        String[] cabecalhos = {"Código da Coleta", "Código do Agente", "Código do Ponto", "Data da Coleta"};
+        DefaultTableModel model = (DefaultTableModel) jTableColeta.getModel();
+        model.setColumnIdentifiers(cabecalhos);
         
+        try
+        {
+            con = new Conexao();
+            c =  new Coleta(con.getDbconnection());
+            Iterator iter =  c.openByQuery(con.getDbconnection(), null, null);
+                       
+            Object[][] objects = new Object[500][4];
+            int i = 0;         
+            
+            while(iter.hasNext())
+            {
+                    c = new Coleta(con.getDbconnection());
+                    c = (Coleta) iter.next();
+                
+                    objects[i][0]= c.getcodColeta();   
+                    objects[i][1]= c.getcodAgente().getcodAgente();
+                    objects[i][2]= c.getcodPonto().getcodPonto();
+                    objects[i][3]= c.getdataColeta();
+                    
+                    model.addRow(new Object[]{objects[i][0], objects[i][1], objects[i][2], objects[i][3]});
+            }
+        }
+        catch(CacheException ex)
+        {
+            Logger.getLogger(frmAgenteAmbiental.class.getName()).log(Level.SEVERE, null, ex);
+        }       
+                jTableColeta.setModel(model);     
     
-  }      
+    }      
 
     
     @SuppressWarnings("unchecked")
@@ -274,7 +315,14 @@ public class frmColeta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btAdicionarAgenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAdicionarAgenteActionPerformed
-        frmAge = new frmAgenteAmbiental();
+        try 
+        {
+            frmAge = new frmAgenteAmbiental();
+        } 
+        catch (CacheException ex) 
+        {
+            Logger.getLogger(frmColeta.class.getName()).log(Level.SEVERE, null, ex);
+        }
         frmAge.setLocationRelativeTo(null);
         frmAge.setVisible(true);
     }//GEN-LAST:event_btAdicionarAgenteActionPerformed
@@ -286,19 +334,69 @@ public class frmColeta extends javax.swing.JFrame {
     }//GEN-LAST:event_btAdiconarPontoActionPerformed
 
     private void btImportarColetaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btImportarColetaActionPerformed
-     
+     codColeta = Integer.parseInt(txtCodColeta.getText());
+     dispose();
     }//GEN-LAST:event_btImportarColetaActionPerformed
 
     private void btCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCadastrarActionPerformed
-     
+        con = new Conexao();
+        try 
+        {
+            c = new Coleta(con.getDbconnection());
+            p = (PontoColeta) PontoColeta._open(con.getDbconnection(), new Id(txtCodPosto.getText()));
+            a = (AgenteAmbiental) AgenteAmbiental._open(con.getDbconnection(), new Id(txtCodAgente.getText()));
+            c.setcodAgente(a);
+            c.setcodPonto(p);
+            c.setdataColeta(txtData.getText());
+            c.save();
+            JOptionPane.showMessageDialog(null, "Coleta realizada com sucesso!");
+            LimpaCampos();
+            LimpaJTable();
+            PreencheJTable();
+        } 
+        catch (CacheException ex) 
+        {
+            Logger.getLogger(frmColeta.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btCadastrarActionPerformed
 
     private void btEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditarActionPerformed
-      
+        con = new Conexao();
+        try 
+        {
+            c =  (Coleta) Coleta._open(con.getDbconnection(), new Id(txtCodColeta.getText()));
+            p = (PontoColeta) PontoColeta._open(con.getDbconnection(), new Id(txtCodPosto.getText()));
+            a = (AgenteAmbiental) AgenteAmbiental._open(con.getDbconnection(), new Id(txtCodAgente.getText()));
+            c.setcodAgente(a);
+            c.setcodPonto(p);
+            c.setdataColeta(txtData.getText());
+            c.save();
+            JOptionPane.showMessageDialog(null, "Coleta editada com sucesso!");
+            LimpaCampos();
+            LimpaJTable();
+            PreencheJTable();
+        } 
+        catch (CacheException ex) 
+        {
+            Logger.getLogger(frmColeta.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btEditarActionPerformed
 
     private void btExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluirActionPerformed
-       
+        con = new Conexao();
+        try 
+        {
+            c =  (Coleta) Coleta._open(con.getDbconnection(), new Id(txtCodColeta.getText()));
+            c.delete();
+            JOptionPane.showMessageDialog(null, "Coleta deletada com sucesso!");
+            LimpaCampos();
+            LimpaJTable();
+            PreencheJTable();
+        } 
+        catch (CacheException ex) 
+        {
+            Logger.getLogger(frmColeta.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btExcluirActionPerformed
        
     private void btEditar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditar1ActionPerformed
@@ -306,7 +404,14 @@ public class frmColeta extends javax.swing.JFrame {
     }//GEN-LAST:event_btEditar1ActionPerformed
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
-        
+        if(frmAgenteAmbiental.codAgente != 0)
+        {
+            txtCodAgente.setText(String.valueOf(frmAgenteAmbiental.codAgente));
+        }
+        if(frmPontoColeta.codPonto != 0)
+        {
+            txtCodPosto.setText(String.valueOf(frmPontoColeta.codPonto));
+        }
     }//GEN-LAST:event_formWindowGainedFocus
 
     private void jTableColetaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableColetaMouseClicked

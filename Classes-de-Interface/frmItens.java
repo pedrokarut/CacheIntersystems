@@ -342,7 +342,7 @@ public class frmItens extends javax.swing.JFrame {
         {
             i = (ItensColeta) ItensColeta._open(con.getDbconnection(), new Id(txtCodItem.getText()));
             i.delete();
-            JOptionPane.showMessageDialog(null, "Item de Coleta editado com sucesso!");
+            JOptionPane.showMessageDialog(null, "Item de Coleta deletado com sucesso!");
             LimpaCampos();
             LimpaJTable();
             PreencheJTable();
